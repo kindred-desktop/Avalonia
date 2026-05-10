@@ -47,6 +47,47 @@ jobs:
         run: |
           if [[ "${{ matrix.platform }}" == osx* ]]; then
             dotnet publish -c Release -r ${{ matrix.platform }} --self-contained true -o ./publish/${{ matrix.suffix }}
+            osx_app_dir="./publish/${{ matrix.suffix }}/SimpleApp.app"
+            mkdir -p "$osx_app_dir/Contents/MacOS"
+            mkdir -p "$osx_app_dir/Contents/Resources"
+            cp "./publish/${{ matrix.suffix }}/SimpleApp" "$osx_app_dir/Contents/MacOS/"
+            cp -r "./publish/${{ matrix.suffix }}/"*.dll "$osx_app_dir/Contents/Resources/" 2>/dev/null || true
+            cp -r "./publish/${{ matrix.suffix }}/"*.pdb "$osx_app_dir/Contents/Resources/" 2>/dev/null || true
+            cp -r "./publish/${{ matrix.suffix }}/"*.json "$osx_app_dir/Contents/Resources/" 2>/dev/null || true
+            cp -r "./publish/${{ matrix.suffix }}/"*.plist "$osx_app_dir/Contents/Resources/" 2>/dev/null || true
+            cp -r "./publish/${{ matrix.suffix }}/"*.runtimeconfig.json "$osx_app_dir/Contents/Resources/" 2>/dev/null || true
+            cp -r "./publish/${{ matrix.suffix }}/"lib* "$osx_app_dir/Contents/Resources/" 2>/dev/null || true
+            cp -r "./publish/${{ matrix.suffix }}/"Avalonia*.dll "$osx_app_dir/Contents/Resources/" 2>/dev/null || true
+            cp -r "./publish/${{ matrix.suffix }}/"Skia*.dll "$osx_app_dir/Contents/Resources/" 2>/dev/null || true
+            cp -r "./publish/${{ matrix.suffix }}/"HarfBuzz*.dll "$osx_app_dir/Contents/Resources/" 2>/dev/null || true
+            cp -r "./publish/${{ matrix.suffix }}/"mscorlib.dll "$osx_app_dir/Contents/Resources/" 2>/dev/null || true
+            cp -r "./publish/${{ matrix.suffix }}/"netstandard.dll "$osx_app_dir/Contents/Resources/" 2>/dev/null || true
+            cp -r "./publish/${{ matrix.suffix }}/"System*.dll "$osx_app_dir/Contents/Resources/" 2>/dev/null || true
+            cp -r "./publish/${{ matrix.suffix }}/"Microsoft*.dll "$osx_app_dir/Contents/Resources/" 2>/dev/null || true
+            cp -r "./publish/${{ matrix.suffix }}/"Mono*.dll "$osx_app_dir/Contents/Resources/" 2>/dev/null || true
+            cp -r "./publish/${{ matrix.suffix }}/"Newtonsoft*.dll "$osx_app_dir/Contents/Resources/" 2>/dev/null || true
+            cp -r "./publish/${{ matrix.suffix }}/"Tmds*.dll "$osx_app_dir/Contents/Resources/" 2>/dev/null || true
+            cat > "$osx_app_dir/Contents/Info.plist" << 'PLIST'
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>CFBundleExecutable</key>
+    <string>SimpleApp</string>
+    <key>CFBundleIdentifier</key>
+    <string>com.simpleapp.iaStudio</string>
+    <key>CFBundleName</key>
+    <string>SimpleApp</string>
+    <key>CFBundlePackageType</key>
+    <string>APPL</string>
+    <key>CFBundleShortVersionString</key>
+    <string>1.0.0</string>
+    <key>CFBundleVersion</key>
+    <string>1.0.0</string>
+</dict>
+</plist>
+PLIST
+            chmod +x "$osx_app_dir/Contents/MacOS/SimpleApp"
           else
             dotnet publish -c Release -r ${{ matrix.platform }} --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o ./publish/${{ matrix.suffix }}
           fi
