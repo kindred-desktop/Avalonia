@@ -18,15 +18,19 @@ jobs:
           - os: ubuntu-latest
             platform: linux-x64
             suffix: linux-x64
+            needs_zip: true
           - os: windows-latest
             platform: win-x64
             suffix: win-x64
+            needs_zip: true
           - os: macos-latest
             platform: osx-x64
             suffix: osx-x64
+            needs_zip: true
           - os: macos-latest
             platform: osx-arm64
             suffix: osx-arm64
+            needs_zip: true
 
     steps:
       - name: Checkout
@@ -44,7 +48,7 @@ jobs:
         run: dotnet build -c Release --no-restore
 
       - name: Publish
-        run: dotnet publish -c Release -r ${{ matrix.platform }} --self-contained true -p:PublishSingleFile=false -p:EnableCompressionInSingleFile=true -o ./publish/${{ matrix.suffix }}
+        run: dotnet publish -c Release -r ${{ matrix.platform }} --self-contained true -p:EnableCompressionInSingleFile=true -o ./publish/${{ matrix.suffix }}
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
@@ -67,34 +71,23 @@ jobs:
         with:
           path: ./artifacts
 
-      - name: Create zip for Linux
+      - name: Prepare for upload
         run: |
           cd artifacts
-          zip -r SimpleApp-linux-x64.zip SimpleApp-linux-x64
-
-      - name: Create zip for Windows
-        run: |
-          cd artifacts
-          powershell -Command "Compress-Archive -Path 'SimpleApp-win-x64\*' -DestinationPath 'SimpleApp-win-x64.zip' -Force"
-
-      - name: Create zip for macOS x64
-        run: |
-          cd artifacts
-          zip -r SimpleApp-osx-x64.zip SimpleApp-osx-x64
-
-      - name: Create zip for macOS ARM64
-        run: |
-          cd artifacts
-          zip -r SimpleApp-osx-arm64.zip SimpleApp-osx-arm64
+          ls -la
+          for dir in */; do
+            name=$(basename "$dir")
+            if [ -d "$dir" ]; then
+              echo "Creating zip for $name"
+              zip -r "${name}.zip" "$name"
+            fi
+          done
+          ls -la
 
       - name: Create Release
         uses: softprops/action-gh-release@v1
         with:
-          files: |
-            artifacts/SimpleApp-linux-x64.zip
-            artifacts/SimpleApp-win-x64.zip
-            artifacts/SimpleApp-osx-x64.zip
-            artifacts/SimpleApp-osx-arm64.zip
+          files: artifacts/*.zip
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
