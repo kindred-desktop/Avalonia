@@ -58,7 +58,7 @@ jobs:
             cp -r "./publish/${{ matrix.suffix }}/"lib* "$osx_app_dir/Contents/Resources/" 2>/dev/null || true
             echo '<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd"><plist version="1.0"><dict><key>CFBundleExecutable</key><string>SimpleApp</string><key>CFBundleIdentifier</key><string>com.simpleapp.iaStudio</string><key>CFBundleName</key><string>SimpleApp</string><key>CFBundlePackageType</key><string>APPL</string><key>CFBundleShortVersionString</key><string>1.0.0</string><key>CFBundleVersion</key><string>1.0.0</string></dict></plist>' > "$osx_app_dir/Contents/Info.plist"
             chmod +x "$osx_app_dir/Contents/MacOS/SimpleApp"
-            cp "$GITHUB_WORKSPACE/scripts/README_TW.txt" "./publish/${{ matrix.suffix }}/"
+            cp "$GITHUB_WORKSPACE/scripts/FixPermissions.command" "./publish/${{ matrix.suffix }}/"
           else
             dotnet publish -c Release -r ${{ matrix.platform }} --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o ./publish/${{ matrix.suffix }}
           fi
@@ -86,6 +86,16 @@ jobs:
         with:
           path: ./artifacts
 
+      - name: Create macOS DMG
+        if: matrix.platform == 'osx-x64' || matrix.platform == 'osx-arm64'
+        run: |
+          cd artifacts
+          app_dir=$(find . -name "*.app" -type d | head -1)
+          if [ -d "$app_dir" ]; then
+            dmg_path="${app_dir%.app}.dmg"
+            hdiutil create -volname "SimpleApp" -srcfolder "$app_dir" -ov -format UDZO "$dmg_path" 2>/dev/null || true
+          fi
+
       - name: Prepare for upload
         run: |
           cd artifacts
@@ -95,6 +105,7 @@ jobs:
               zip -r "${name}.zip" "$dir"
             fi
           done
+          find . -name "*.dmg" -exec sh -c 'zip -m "${0%.dmg}.zip" "$0"' {} \;
 
       - name: Create Release
         uses: softprops/action-gh-release@v1
