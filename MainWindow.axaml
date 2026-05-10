@@ -1,22 +1,92 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        x:Class="SimpleApp.MainWindow"
-        Title="简单文本处理工具"
-        Width="500"
-        Height="400"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="using:SimpleApp.Desktop.ViewModels"
+        xmlns:views="using:SimpleApp.Desktop.Views"
+        mc:Ignorable="d" d:DesignWidth="1280" d:DesignHeight="800"
+        x:Class="SimpleApp.Desktop.MainWindow"
+        Title="{Binding Title}"
+        Width="1280" Height="800"
+        MinWidth="1024" MinHeight="600"
         WindowStartupLocation="CenterScreen"
-        CanResize="False">
+        x:DataType="vm:MainWindowViewModel">
 
-  <StackPanel Margin="20">
-    <TextBlock Text="输入文本：" FontWeight="Bold" FontSize="14"/>
-    <TextBox x:Name="InputTextBox" Watermark="请输入要处理的文本..." Height="30"/>
-    <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
-      <Button x:Name="SubmitButton" Content="提交" Width="100" Height="30"/>
-      <Button x:Name="ClearButton" Content="清空历史" Width="100" Height="30" Margin="10,0,0,0"/>
-    </StackPanel>
-    <TextBlock x:Name="ResultLabel" Text="结果：" Foreground="Green" FontSize="12" Margin="0,10,0,0"/>
-    <TextBlock Text="处理历史：" FontWeight="Bold" FontSize="14" Margin="0,10,0,0"/>
-    <TextBox x:Name="HistoryTextBox" IsReadOnly="True" AcceptsReturn="True" TextWrapping="Wrap" Height="200" Margin="0,5,0,0"/>
-  </StackPanel>
+    <Design.DataContext>
+        <vm:MainWindowViewModel/>
+    </Design.DataContext>
 
+    <Grid RowDefinitions="Auto,*,Auto">
+        <Border Grid.Row="0" Background="#2563EB" Padding="16,12">
+            <Grid ColumnDefinitions="Auto,*,Auto">
+                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="12">
+                    <TextBlock Text="🏭" FontSize="24" VerticalAlignment="Center"/>
+                    <TextBlock Text="IAStudio" FontSize="20" FontWeight="SemiBold"
+                               Foreground="White" VerticalAlignment="Center"/>
+                </StackPanel>
+
+                <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="24">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <TextBlock Text="设备:" Foreground="#E2E8F0" VerticalAlignment="Center"/>
+                        <TextBlock Text="{Binding TotalDeviceCount}" Foreground="White"
+                                   FontWeight="Bold" VerticalAlignment="Center"/>
+                        <TextBlock Text="/" Foreground="#94A3B8" VerticalAlignment="Center"/>
+                        <TextBlock Text="{Binding OnlineDeviceCount}" Foreground="#22C55E"
+                                   FontWeight="Bold" VerticalAlignment="Center"/>
+                    </StackPanel>
+
+                    <Border Background="#EF4444" CornerRadius="4" Padding="8,4"
+                            IsVisible="{Binding ActiveAlarmCount, Converter={x:Static ObjectConverters.IsNotNull}}">
+                        <StackPanel Orientation="Horizontal" Spacing="4">
+                            <TextBlock Text="🔔" VerticalAlignment="Center"/>
+                            <TextBlock Text="{Binding ActiveAlarmCount}" Foreground="White"
+                                       FontWeight="Bold" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Border>
+
+                    <TextBlock Text="{Binding CurrentTime}" Foreground="#E2E8F0"
+                               VerticalAlignment="Center" FontFamily="Consolas"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <Grid Grid.Row="1" ColumnDefinitions="220,*">
+            <Border Grid.Column="0" Background="#F8FAFC" BorderBrush="#E2E8F0" BorderThickness="0,0,1,0">
+                <StackPanel Margin="8">
+                    <Button Content="📊 仪表盘" Command="{Binding NavigateToCommand}"
+                            CommandParameter="Dashboard"
+                            HorizontalAlignment="Stretch" HorizontalContentAlignment="Left"
+                            Padding="16,12" Margin="0,2"/>
+
+                    <Button Content="🔧 设备列表" Command="{Binding NavigateToCommand}"
+                            CommandParameter="Devices"
+                            HorizontalAlignment="Stretch" HorizontalContentAlignment="Left"
+                            Padding="16,12" Margin="0,2"/>
+
+                    <Button Content="📈 趋势数据" Command="{Binding NavigateToCommand}"
+                            CommandParameter="Trends"
+                            HorizontalAlignment="Stretch" HorizontalContentAlignment="Left"
+                            Padding="16,12" Margin="0,2"/>
+
+                    <Button Content="🔔 报警列表" Command="{Binding NavigateToCommand}"
+                            CommandParameter="Alarms"
+                            HorizontalAlignment="Stretch" HorizontalContentAlignment="Left"
+                            Padding="16,12" Margin="0,2"/>
+
+                    <Button Content="⚙️ 设置" Command="{Binding NavigateToCommand}"
+                            CommandParameter="Settings"
+                            HorizontalAlignment="Stretch" HorizontalContentAlignment="Left"
+                            Padding="16,12" Margin="0,2"/>
+                </StackPanel>
+            </Border>
+
+            <Border Grid.Column="1" Background="#F1F5F9">
+                <ContentControl Content="{Binding CurrentPage}"/>
+            </Border>
+        </Grid>
+
+        <Border Grid.Row="2" Background="White" Padding="16,8" BorderBrush="#E2E8F0" BorderThickness="0,1,0,0">
+            <TextBlock Text="IAStudio v1.0.0 - 工业自动控制系统 (Demo Mode)" Foreground="#94A3B8" FontSize="12"/>
+        </Border>
+    </Grid>
 </Window>

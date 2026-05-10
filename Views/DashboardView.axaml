@@ -1,0 +1,147 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:SimpleApp.Desktop.ViewModels"
+             xmlns:m="using:SimpleApp.Core.Models"
+             xmlns:conv="using:SimpleApp.Desktop.Converters"
+             mc:Ignorable="d" d:DesignWidth="1280" d:DesignHeight="800"
+             x:Class="SimpleApp.Desktop.Views.DashboardView"
+             x:DataType="vm:DashboardViewModel">
+
+    <UserControl.Resources>
+        <conv:AlarmLevelToColorConverter x:Key="AlarmLevelToColor"/>
+    </UserControl.Resources>
+
+    <Design.DataContext>
+        <vm:DashboardViewModel/>
+    </Design.DataContext>
+
+    <ScrollViewer Padding="24">
+        <StackPanel Spacing="24">
+            <TextBlock Grid.Column="0" Text="{Binding Title}" FontSize="24" FontWeight="SemiBold"/>
+
+            <Grid ColumnDefinitions="*,*,*,*" RowDefinitions="Auto">
+                <Border Grid.Column="0" Background="White" CornerRadius="8" Padding="20" Margin="0,0,8,0">
+                    <StackPanel Spacing="8">
+                        <Border Background="#EFF6FF" CornerRadius="8" Padding="8" HorizontalAlignment="Left">
+                            <TextBlock Text="📊" FontSize="20"/>
+                        </Border>
+                        <TextBlock Text="总设备数" Foreground="#64748B" FontSize="14"/>
+                        <TextBlock Text="{Binding TotalDevices}" FontSize="32" FontWeight="Bold" Foreground="#1E293B"/>
+                    </StackPanel>
+                </Border>
+
+                <Border Grid.Column="1" Background="White" CornerRadius="8" Padding="20" Margin="0,0,8,0">
+                    <StackPanel Spacing="8">
+                        <Border Background="#DCFCE7" CornerRadius="8" Padding="8" HorizontalAlignment="Left">
+                            <TextBlock Text="🟢" FontSize="20"/>
+                        </Border>
+                        <TextBlock Text="在线设备" Foreground="#64748B" FontSize="14"/>
+                        <TextBlock Text="{Binding OnlineDevices}" FontSize="32" FontWeight="Bold" Foreground="#22C55E"/>
+                    </StackPanel>
+                </Border>
+
+                <Border Grid.Column="2" Background="White" CornerRadius="8" Padding="20" Margin="0,0,8,0">
+                    <StackPanel Spacing="8">
+                        <Border Background="#DBEAFE" CornerRadius="8" Padding="8" HorizontalAlignment="Left">
+                            <TextBlock Text="⚙️" FontSize="20"/>
+                        </Border>
+                        <TextBlock Text="运行中" Foreground="#64748B" FontSize="14"/>
+                        <TextBlock Text="{Binding RunningDevices}" FontSize="32" FontWeight="Bold" Foreground="#2563EB"/>
+                    </StackPanel>
+                </Border>
+
+                <Border Grid.Column="3" Background="White" CornerRadius="8" Padding="20">
+                    <StackPanel Spacing="8">
+                        <Border Background="#FEE2E2" CornerRadius="8" Padding="8" HorizontalAlignment="Left">
+                            <TextBlock Text="⚠️" FontSize="20"/>
+                        </Border>
+                        <TextBlock Text="告警/故障" Foreground="#64748B" FontSize="14"/>
+                        <TextBlock Text="{Binding WarningDevices}" FontSize="32" FontWeight="Bold" Foreground="#EF4444"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+
+            <Grid ColumnDefinitions="*,*" RowDefinitions="Auto">
+                <Border Grid.Column="0" Background="White" CornerRadius="8" Padding="20" Margin="0,0,8,0">
+                    <StackPanel Spacing="16">
+                        <TextBlock Text="报警概览" FontSize="18" FontWeight="SemiBold"/>
+                        <Grid ColumnDefinitions="*,*">
+                            <Border Grid.Column="0" Background="#FEF3C7" CornerRadius="8" Padding="16" Margin="0,0,8,0">
+                                <StackPanel HorizontalAlignment="Center">
+                                    <TextBlock Text="活动告警" Foreground="#92400E" FontSize="12"/>
+                                    <TextBlock Text="{Binding ActiveAlarms}" FontSize="28" FontWeight="Bold" Foreground="#F59E0B" HorizontalAlignment="Center"/>
+                                </StackPanel>
+                            </Border>
+                            <Border Grid.Column="1" Background="#FEE2E2" CornerRadius="8" Padding="16">
+                                <StackPanel HorizontalAlignment="Center">
+                                    <TextBlock Text="严重告警" Foreground="#991B1B" FontSize="12"/>
+                                    <TextBlock Text="{Binding CriticalAlarms}" FontSize="28" FontWeight="Bold" Foreground="#EF4444" HorizontalAlignment="Center"/>
+                                </StackPanel>
+                            </Border>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <Border Grid.Column="1" Background="White" CornerRadius="8" Padding="20">
+                    <StackPanel Spacing="12">
+                        <TextBlock Text="最近告警" FontSize="18" FontWeight="SemiBold"/>
+                        <ScrollViewer Height="180">
+                            <ItemsControl ItemsSource="{Binding RecentAlarms}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate x:DataType="m:Alarm">
+                                        <Border Padding="12" Margin="0,4" Background="#F8FAFC" CornerRadius="6">
+                                            <Grid ColumnDefinitions="Auto,*,Auto">
+                                                <Border Grid.Column="0" Width="4" CornerRadius="2" Margin="0,0,12,0"
+                                                        Background="{Binding Level, Converter={StaticResource AlarmLevelToColor}}"/>
+                                                <StackPanel Grid.Column="1" Spacing="2">
+                                                    <TextBlock Text="{Binding Message}" FontWeight="SemiBold" FontSize="13" TextTrimming="CharacterEllipsis"/>
+                                                    <TextBlock Text="{Binding DeviceId}" Foreground="#64748B" FontSize="11"/>
+                                                </StackPanel>
+                                                <TextBlock Grid.Column="2" Text="{Binding Timestamp, StringFormat='{}{0:HH:mm}'}"
+                                                          Foreground="#94A3B8" FontSize="11" VerticalAlignment="Center"/>
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </ScrollViewer>
+                    </StackPanel>
+                </Border>
+            </Grid>
+
+            <Border Background="White" CornerRadius="8" Padding="20">
+                <StackPanel Spacing="12">
+                    <TextBlock Text="设备状态分布" FontSize="18" FontWeight="SemiBold"/>
+                    <Grid ColumnDefinitions="*,*,*,*" RowDefinitions="Auto">
+                        <Border Grid.Column="0" Background="#F0FDF4" CornerRadius="6" Padding="12" Margin="0,0,8,0">
+                            <StackPanel HorizontalAlignment="Center">
+                                <TextBlock Text="正常运行" Foreground="#166534" FontSize="12"/>
+                                <TextBlock Text="{Binding RunningDevices}" FontWeight="Bold" Foreground="#22C55E" FontSize="20" HorizontalAlignment="Center"/>
+                            </StackPanel>
+                        </Border>
+                        <Border Grid.Column="1" Background="#FEF9C3" CornerRadius="6" Padding="12" Margin="0,0,8,0">
+                            <StackPanel HorizontalAlignment="Center">
+                                <TextBlock Text="待机" Foreground="#854D0E" FontSize="12"/>
+                                <TextBlock Text="{Binding OnlineDevices}" FontWeight="Bold" Foreground="#F59E0B" FontSize="20" HorizontalAlignment="Center"/>
+                            </StackPanel>
+                        </Border>
+                        <Border Grid.Column="2" Background="#FEE2E2" CornerRadius="6" Padding="12" Margin="0,0,8,0">
+                            <StackPanel HorizontalAlignment="Center">
+                                <TextBlock Text="故障" Foreground="#991B1B" FontSize="12"/>
+                                <TextBlock Text="{Binding WarningDevices}" FontWeight="Bold" Foreground="#EF4444" FontSize="20" HorizontalAlignment="Center"/>
+                            </StackPanel>
+                        </Border>
+                        <Border Grid.Column="3" Background="#F1F5F9" CornerRadius="6" Padding="12">
+                            <StackPanel HorizontalAlignment="Center">
+                                <TextBlock Text="离线" Foreground="#475569" FontSize="12"/>
+                                <TextBlock Text="{Binding TotalDevices}" FontWeight="Bold" Foreground="#64748B" FontSize="20" HorizontalAlignment="Center"/>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

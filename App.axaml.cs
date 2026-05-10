@@ -1,18 +1,27 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
-using Avalonia.Controls;
-using Avalonia.Styling;
+using Avalonia.Markup.Xaml;
+using Serilog;
 
-namespace SimpleApp
+namespace SimpleApp.Desktop;
+
+public partial class App : Application
 {
-    public class App : Application
+    public override void Initialize()
     {
-        public override void OnFrameworkInitializationCompleted()
+        AvaloniaXamlLoader.Load(this);
+    }
+
+    public override void OnFrameworkInitializationCompleted()
+    {
+        Log.Information("SimpleApp starting...");
+
+        if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
-            {
-                desktop.MainWindow = new MainWindow();
-            }
+            desktop.MainWindow = new MainWindow();
+            Log.Information("MainWindow created");
         }
+
+        base.OnFrameworkInitializationCompleted();
     }
 }

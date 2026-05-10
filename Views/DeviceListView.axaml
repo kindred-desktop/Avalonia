@@ -1,0 +1,86 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:SimpleApp.Desktop.ViewModels"
+             xmlns:m="using:SimpleApp.Core.Models"
+             mc:Ignorable="d" d:DesignWidth="1280" d:DesignHeight="800"
+             x:Class="SimpleApp.Desktop.Views.DeviceListView"
+             x:DataType="vm:DeviceListViewModel">
+
+    <Design.DataContext>
+        <vm:DeviceListViewModel/>
+    </Design.DataContext>
+
+    <Grid RowDefinitions="Auto,*">
+        <Border Grid.Row="0" Background="White" Padding="24,16" BorderBrush="#E2E8F0" BorderThickness="0,0,0,1">
+            <Grid ColumnDefinitions="*,Auto,Auto,Auto,Auto">
+                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="16">
+                    <TextBlock Text="{Binding Title}" FontSize="24" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                    <Border Background="#DBEAFE" CornerRadius="12" Padding="12,4">
+                        <TextBlock Text="{Binding FilteredDevices.Count, StringFormat='{}{0} 台设备'}" Foreground="#2563EB" FontSize="13"/>
+                    </Border>
+                </StackPanel>
+
+                <TextBox Grid.Column="1" PlaceholderText="搜索设备..." Text="{Binding SearchText}"
+                        Width="200" Margin="0,0,16,0"/>
+
+                <ComboBox Grid.Column="2" ItemsSource="{Binding TypeFilters}"
+                         SelectedItem="{Binding SelectedTypeFilter}" Width="120" Margin="0,0,8,0"/>
+
+                <ComboBox Grid.Column="3" ItemsSource="{Binding StatusFilters}"
+                         SelectedItem="{Binding SelectedStatusFilter}" Width="120" Margin="0,0,16,0"/>
+
+                <Button Grid.Column="4" Content="🔄 刷新" Command="{Binding RefreshCommand}"/>
+            </Grid>
+        </Border>
+
+        <ScrollViewer Grid.Row="1" Padding="24">
+            <ItemsControl ItemsSource="{Binding FilteredDevices}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate x:DataType="m:Device">
+                        <Border Background="White" CornerRadius="12" Padding="20" Margin="0,0,16,16" Width="300">
+                            <StackPanel Spacing="16">
+                                <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto">
+                                    <Border Grid.Column="0" Grid.RowSpan="2" Background="#EFF6FF" CornerRadius="10" Padding="12" Margin="0,0,16,0">
+                                        <TextBlock Text="🔧" FontSize="24"/>
+                                    </Border>
+                                    <TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding Name}" FontWeight="SemiBold" FontSize="16" TextTrimming="CharacterEllipsis"/>
+                                    <TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding Code}" Foreground="#64748B" FontSize="12"/>
+                                </Grid>
+
+                                <Border Background="#F8FAFC" CornerRadius="8" Padding="16">
+                                    <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto">
+                                        <StackPanel Grid.Column="0" Grid.Row="0" Margin="0,0,0,12">
+                                            <TextBlock Text="位置" Foreground="#94A3B8" FontSize="11"/>
+                                            <TextBlock Text="{Binding Location}" Foreground="#1E293B" FontSize="13"/>
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="1" Grid.Row="0" Margin="0,0,0,12">
+                                            <TextBlock Text="单位" Foreground="#94A3B8" FontSize="11"/>
+                                            <TextBlock Text="{Binding Unit}" Foreground="#1E293B" FontSize="13"/>
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2">
+                                            <TextBlock Text="状态" Foreground="#94A3B8" FontSize="11"/>
+                                            <Border Background="#DCFCE7" CornerRadius="4" Padding="8,4" HorizontalAlignment="Left" Margin="0,4,0,0">
+                                                <TextBlock Text="{Binding Status}" Foreground="#166534" FontSize="12" FontWeight="Medium"/>
+                                            </Border>
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+
+                                <Button Content="查看详情" HorizontalAlignment="Stretch" Classes="Primary"
+                                       Command="{Binding $parent[ItemsControl].((vm:DeviceListViewModel)DataContext).SelectDeviceCommand}"
+                                       CommandParameter="{Binding}"/>
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

@@ -1,0 +1,94 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:SimpleApp.Desktop.ViewModels"
+             xmlns:m="using:SimpleApp.Core.Models"
+             mc:Ignorable="d" d:DesignWidth="1280" d:DesignHeight="800"
+             x:Class="SimpleApp.Desktop.Views.AlarmListView"
+             x:DataType="vm:AlarmListViewModel">
+
+    <Design.DataContext>
+        <vm:AlarmListViewModel/>
+    </Design.DataContext>
+
+    <Grid RowDefinitions="Auto,*">
+        <Border Grid.Row="0" Background="White" Padding="24,16" BorderBrush="#E2E8F0" BorderThickness="0,0,0,1">
+            <Grid ColumnDefinitions="*,Auto,Auto,Auto,Auto">
+                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="16">
+                    <TextBlock Text="{Binding Title}" FontSize="24" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                    <Border Background="#FEE2E2" CornerRadius="12" Padding="12,4">
+                        <TextBlock Text="{Binding Alarms.Count, StringFormat='{}{0} 条报警'}" Foreground="#EF4444" FontSize="13"/>
+                    </Border>
+                </StackPanel>
+
+                <ComboBox Grid.Column="1" ItemsSource="{Binding LevelFilters}"
+                         SelectedItem="{Binding SelectedLevelFilter}" Width="120" Margin="0,0,8,0"/>
+
+                <ComboBox Grid.Column="2" ItemsSource="{Binding StatusFilters}"
+                         SelectedItem="{Binding SelectedStatusFilter}" Width="120" Margin="0,0,8,0"/>
+
+                <Button Grid.Column="3" Content="✓ 确认全部" Command="{Binding AcknowledgeAllCommand}" Margin="0,0,8,0"/>
+
+                <Button Grid.Column="4" Content="🔄 刷新" Command="{Binding RefreshCommand}"/>
+            </Grid>
+        </Border>
+
+        <ScrollViewer Grid.Row="1" Padding="24">
+            <StackPanel Spacing="12">
+                <ItemsControl ItemsSource="{Binding Alarms}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate x:DataType="m:Alarm">
+                            <Border Background="White" CornerRadius="12" Padding="20">
+                                <Grid ColumnDefinitions="Auto,*,Auto,Auto">
+                                    <Border Grid.Column="0" Width="6" CornerRadius="3" Margin="0,0,20,0" MinHeight="60" Background="{Binding Level}"/>
+
+                                    <StackPanel Grid.Column="1" Spacing="8">
+                                        <Grid ColumnDefinitions="*,Auto">
+                                            <TextBlock Grid.Column="0" Text="{Binding Message}" FontWeight="SemiBold" FontSize="15" TextTrimming="CharacterEllipsis"/>
+                                            <Border Grid.Column="1" Background="#FEF3C7" CornerRadius="4" Padding="8,2" HorizontalAlignment="Right">
+                                                <TextBlock Text="{Binding Level}" Foreground="#92400E" FontSize="11" FontWeight="Medium"/>
+                                            </Border>
+                                        </Grid>
+
+                                        <Grid ColumnDefinitions="Auto,Auto,Auto,Auto">
+                                            <StackPanel Grid.Column="0" Orientation="Horizontal">
+                                                <TextBlock Text="设备:" Foreground="#94A3B8" FontSize="12" Margin="0,0,4,0"/>
+                                                <TextBlock Text="{Binding DeviceId}" Foreground="#64748B" FontSize="12"/>
+                                            </StackPanel>
+                                            <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="16,0,0,0">
+                                                <TextBlock Text="测点:" Foreground="#94A3B8" FontSize="12" Margin="0,0,4,0"/>
+                                                <TextBlock Text="{Binding TagId}" Foreground="#64748B" FontSize="12"/>
+                                            </StackPanel>
+                                            <StackPanel Grid.Column="2" Orientation="Horizontal" Margin="16,0,0,0">
+                                                <TextBlock Text="触发值:" Foreground="#94A3B8" FontSize="12" Margin="0,0,4,0"/>
+                                                <TextBlock Text="{Binding TriggerValue, StringFormat='{}{0:F2}'}" Foreground="#64748B" FontSize="12"/>
+                                            </StackPanel>
+                                            <StackPanel Grid.Column="3" Orientation="Horizontal" Margin="16,0,0,0">
+                                                <TextBlock Text="阈值:" Foreground="#94A3B8" FontSize="12" Margin="0,0,4,0"/>
+                                                <TextBlock Text="{Binding Threshold, StringFormat='{}{0:F2}'}" Foreground="#64748B" FontSize="12"/>
+                                            </StackPanel>
+                                        </Grid>
+
+                                        <TextBlock Text="{Binding Timestamp, StringFormat='{}{0:yyyy-MM-dd HH:mm:ss}'}" Foreground="#94A3B8" FontSize="11"/>
+                                    </StackPanel>
+
+                                    <StackPanel Grid.Column="2" VerticalAlignment="Center" Margin="0,0,16,0">
+                                        <Border Background="#DCFCE7" CornerRadius="6" Padding="12,6" IsVisible="{Binding !IsAcknowledged}">
+                                            <TextBlock Text="未确认" Foreground="#166534" FontSize="11"/>
+                                        </Border>
+                                        <Border Background="#F1F5F9" CornerRadius="6" Padding="12,6" IsVisible="{Binding IsAcknowledged}">
+                                            <TextBlock Text="已确认" Foreground="#475569" FontSize="11"/>
+                                        </Border>
+                                    </StackPanel>
+
+                                    <Button Grid.Column="3" Content="确认" Command="{Binding $parent[UserControl].((vm:AlarmListViewModel)DataContext).AcknowledgeAlarmCommand}" CommandParameter="{Binding}" VerticalAlignment="Center"/>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

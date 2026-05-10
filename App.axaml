@@ -1,7 +1,29 @@
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             x:Class="SimpleApp.App">
-  <Application.Styles>
-    <FluentTheme />
-  </Application.Styles>
+             xmlns:vm="using:SimpleApp.Desktop.ViewModels"
+             xmlns:views="using:SimpleApp.Desktop.Views"
+             x:Class="SimpleApp.Desktop.App"
+             RequestedThemeVariant="Light">
+
+    <Application.Styles>
+        <FluentTheme />
+    </Application.Styles>
+
+    <Application.DataTemplates>
+        <DataTemplate DataType="vm:DashboardViewModel">
+            <views:DashboardView/>
+        </DataTemplate>
+        <DataTemplate DataType="vm:DeviceListViewModel">
+            <views:DeviceListView/>
+        </DataTemplate>
+        <DataTemplate DataType="vm:TrendsViewModel">
+            <views:TrendsView/>
+        </DataTemplate>
+        <DataTemplate DataType="vm:AlarmListViewModel">
+            <views:AlarmListView/>
+        </DataTemplate>
+        <DataTemplate DataType="vm:SettingsViewModel">
+            <views:SettingsView/>
+        </DataTemplate>
+    </Application.DataTemplates>
 </Application>
