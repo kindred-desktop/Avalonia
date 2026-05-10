@@ -44,7 +44,7 @@ jobs:
         run: dotnet build -c Release --no-restore
 
       - name: Publish
-        run: dotnet publish -c Release -r ${{ matrix.platform }} --self-contained true -o ./publish/${{ matrix.suffix }}
+        run: dotnet publish -c Release -r ${{ matrix.platform }} --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o ./publish/${{ matrix.suffix }}
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4

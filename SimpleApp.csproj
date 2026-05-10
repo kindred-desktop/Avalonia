@@ -11,6 +11,7 @@
     <FileVersion>1.0.0.0</FileVersion>
     <Product>IAStudio</Product>
     <Description>工业自动控制系统</Description>
+    <PublishSingleFile>true</PublishSingleFile>
     <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
     <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
   </PropertyGroup>
