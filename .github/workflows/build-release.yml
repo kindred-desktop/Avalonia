@@ -18,19 +18,15 @@ jobs:
           - os: ubuntu-latest
             platform: linux-x64
             suffix: linux-x64
-            needs_zip: true
           - os: windows-latest
             platform: win-x64
             suffix: win-x64
-            needs_zip: true
           - os: macos-latest
             platform: osx-x64
             suffix: osx-x64
-            needs_zip: true
           - os: macos-latest
             platform: osx-arm64
             suffix: osx-arm64
-            needs_zip: true
 
     steps:
       - name: Checkout
@@ -48,7 +44,7 @@ jobs:
         run: dotnet build -c Release --no-restore
 
       - name: Publish
-        run: dotnet publish -c Release -r ${{ matrix.platform }} --self-contained true -p:EnableCompressionInSingleFile=true -o ./publish/${{ matrix.suffix }}
+        run: dotnet publish -c Release -r ${{ matrix.platform }} --self-contained true -o ./publish/${{ matrix.suffix }}
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
@@ -74,15 +70,12 @@ jobs:
       - name: Prepare for upload
         run: |
           cd artifacts
-          ls -la
           for dir in */; do
             name=$(basename "$dir")
             if [ -d "$dir" ]; then
-              echo "Creating zip for $name"
-              zip -r "${name}.zip" "$name"
+              zip -r "${name}.zip" "$dir"
             fi
           done
-          ls -la
 
       - name: Create Release
         uses: softprops/action-gh-release@v1
