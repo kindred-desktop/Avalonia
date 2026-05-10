@@ -24,8 +24,55 @@ public class MockDataService : IDataService
         _dataTimer.Elapsed += async (_, _) => await GenerateDataAsync();
         _dataTimer.Start();
 
+        _ = PreloadHistoricalDataAsync();
+
         Log.Information("MockDataService started");
     }
+
+    private async Task PreloadHistoricalDataAsync()
+    {
+        await Task.Delay(500);
+        var devices = await _deviceService.GetAllDevicesAsync();
+        var now = DateTime.Now;
+
+        foreach (var device in devices)
+        {
+            foreach (var tag in device.Tags)
+            {
+                for (int i = 60; i >= 0; i--)
+                {
+                    var timestamp = now.AddMinutes(-i);
+                    var baseValue = GetBaseValue(tag.Id);
+                    var value = baseValue + new Random().NextDouble() * 10 - 5;
+
+                    _historicalData.Add(new DataPoint
+                    {
+                        DeviceId = device.Id,
+                        TagId = tag.Id,
+                        Timestamp = timestamp,
+                        Value = Math.Max(0, value)
+                    });
+                }
+            }
+        }
+
+        Log.Information("Preloaded {Count} historical data points", _historicalData.Count);
+    }
+
+    private static double GetBaseValue(string tagId) => tagId switch
+    {
+        "TEMP" => 55,
+        "CURRENT" => 25,
+        "SPEED" => 1500,
+        "VIBRATION" => 1.5,
+        "FLOW" => 60,
+        "PRESSURE" => 5,
+        "LEVEL" => 65,
+        "RUNTIME" => 5000,
+        "POSITION" => 50,
+        "LEAK" => 0,
+        _ => 50
+    };
 
     private async Task GenerateDataAsync()
     {
