@@ -58,8 +58,7 @@ jobs:
             cp -r "./publish/${{ matrix.suffix }}/"lib* "$osx_app_dir/Contents/Resources/" 2>/dev/null || true
             echo '<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd"><plist version="1.0"><dict><key>CFBundleExecutable</key><string>SimpleApp</string><key>CFBundleIdentifier</key><string>com.simpleapp.iaStudio</string><key>CFBundleName</key><string>SimpleApp</string><key>CFBundlePackageType</key><string>APPL</string><key>CFBundleShortVersionString</key><string>1.0.0</string><key>CFBundleVersion</key><string>1.0.0</string></dict></plist>' > "$osx_app_dir/Contents/Info.plist"
             chmod +x "$osx_app_dir/Contents/MacOS/SimpleApp"
-            cp "$GITHUB_WORKSPACE/scripts/FixPermissions.command" "./publish/${{ matrix.suffix }}/"
-            chmod +x "./publish/${{ matrix.suffix }}/FixPermissions.command"
+            cp "$GITHUB_WORKSPACE/scripts/README_TW.txt" "./publish/${{ matrix.suffix }}/"
           else
             dotnet publish -c Release -r ${{ matrix.platform }} --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o ./publish/${{ matrix.suffix }}
           fi
