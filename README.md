@@ -6,8 +6,8 @@
 
 | 技术 | 版本 |
 |------|------|
-| .NET | 10.0 |
-| Avalonia | 11.2.3 |
+| .NET | 8.0 |
+| Avalonia | 11.0.0 |
 | Serilog (日志) | 4.0.0 |
 
 ## 功能特性
@@ -24,7 +24,10 @@
 
 ```
 SimpleApp/
-├── App.axaml.cs       # 主应用入口和 UI
+├── App.axaml          # 应用样式和主题定义
+├── App.axaml.cs       # 主应用入口
+├── MainWindow.axaml   # 主窗口 XAML 定义
+├── MainWindow.axaml.cs # 主窗口代码隐藏
 ├── Program.cs          # 程序入口、日志配置、全局异常处理
 ├── appsettings.json    # 应用程序配置
 ├── SimpleApp.csproj    # 项目文件
@@ -35,7 +38,7 @@ SimpleApp/
 
 ### 环境要求
 
-- .NET 10.0 SDK 或更高版本
+- .NET 8.0 SDK 或更高版本
 
 ### 开发模式运行
 
