@@ -36,7 +36,7 @@
                     </StackPanel>
 
                     <Border Background="#EF4444" CornerRadius="4" Padding="8,4"
-                            IsVisible="{Binding ActiveAlarmCount, Converter={x:Static ObjectConverters.IsNotNull}}">
+                            IsVisible="{Binding !!ActiveAlarmCount}">
                         <StackPanel Orientation="Horizontal" Spacing="4">
                             <TextBlock Text="🔔" VerticalAlignment="Center"/>
                             <TextBlock Text="{Binding ActiveAlarmCount}" Foreground="White"

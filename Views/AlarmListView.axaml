@@ -4,9 +4,14 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="using:SimpleApp.Desktop.ViewModels"
              xmlns:m="using:SimpleApp.Core.Models"
+             xmlns:conv="using:SimpleApp.Desktop.Converters"
              mc:Ignorable="d" d:DesignWidth="1280" d:DesignHeight="800"
              x:Class="SimpleApp.Desktop.Views.AlarmListView"
              x:DataType="vm:AlarmListViewModel">
+
+    <UserControl.Resources>
+        <conv:AlarmLevelToColorConverter x:Key="AlarmLevelToColor"/>
+    </UserControl.Resources>
 
     <Design.DataContext>
         <vm:AlarmListViewModel/>
@@ -41,7 +46,7 @@
                         <DataTemplate x:DataType="m:Alarm">
                             <Border Background="White" CornerRadius="12" Padding="20">
                                 <Grid ColumnDefinitions="Auto,*,Auto,Auto">
-                                    <Border Grid.Column="0" Width="6" CornerRadius="3" Margin="0,0,20,0" MinHeight="60" Background="{Binding Level}"/>
+                                    <Border Grid.Column="0" Width="6" CornerRadius="3" Margin="0,0,20,0" MinHeight="60" Background="{Binding Level, Converter={StaticResource AlarmLevelToColor}}"/>
 
                                     <StackPanel Grid.Column="1" Spacing="8">
                                         <Grid ColumnDefinitions="*,Auto">
